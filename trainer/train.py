@@ -17,7 +17,6 @@ def train(train_loader, test_loader, config):
     """
     # 定义网络
     network = net(config, model=None)  # 使用自定义初始化
-    network.train(True)
     network.cuda()
     # 参数
     base, head = [], []
@@ -61,6 +60,7 @@ def train(train_loader, test_loader, config):
     global_step = 0
     step_per_epoch = len(train_loader)
     for epoch in range(config['max_epoch']):
+        network.train(True)
         optimizer.param_groups[0]['lr'] = config['lr'] * 0.1
         optimizer.param_groups[1]['lr'] = config['lr']
         loss_per_ten_step = 0
