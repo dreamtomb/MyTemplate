@@ -34,6 +34,8 @@ def main():
                               shuffle=config['shuffle']['train'],
                               num_workers=config['num_workers'])
     test_set = DataSet(config, 'test')
+    test_set.train_samples = train_set.train_samples
+    test_set.test_samples = train_set.test_samples
     test_loader = DataLoader(test_set,
                              collate_fn=test_set.collate,
                              batch_size=config['batch_size'],
