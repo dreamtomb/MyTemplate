@@ -13,6 +13,7 @@ from record.snapshot import snapshot
 def main():
     # 设置随机种子并指定训练显卡
     seed = 7
+    torch.backends.cudnn.benchmark = True
     torch.backends.cudnn.deterministic = True
     torch.manual_seed(seed)
     if torch.cuda.is_available():

@@ -16,7 +16,11 @@ def train(train_loader, test_loader, config):
     该函数直接被main函数调用，是训练函数
     """
     # 定义网络
-    network = net(config, model=None)  # 使用自定义初始化
+    if config['load_model']:
+        model = './checkpoints/*.pth'
+        network = net(config, model)  # 使用训练好的模型继续训练
+    else:
+        network = net(config, model=None)  # 使用自定义初始化
     network.cuda()
     # 参数
     base, head = [], []
