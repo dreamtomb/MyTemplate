@@ -83,8 +83,9 @@ class Bottle2neck(nn.Module):
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
-
-        spx = torch.split(out, self.width, 1)
+        # NOTE: 如果返回值有多个tensor，而且后面还要使用torch相关函数的话最好不要用一个tuple接收多个返回值，会出现cpu、gpu的混乱，list同理，python自带数据类型最好不用，直接用stack函数堆叠到dim0，然后后面代码和tuple的一样。
+        spx1, spx2, spx3, spx4 = torch.split(out, self.width, 1)
+        spx = torch.stack((spx1, spx2, spx3, spx4), 0)
         for i in range(self.nums):
             if i == 0 or self.stype == 'stage':
                 sp = spx[i]
