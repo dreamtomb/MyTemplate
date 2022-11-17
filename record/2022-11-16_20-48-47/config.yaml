@@ -1,0 +1,30 @@
+pretrain_model: './pretrain_model/resnet50.pth'
+data_path: '../new_data'
+config_path: './config/config.yaml'
+summary_path: './summary/summary.xlsx'
+record_path: './record'
+log_path: './log'
+image_res_path: './image_res'
+checkpoints_path: './checkpoints'
+num_workers: 8
+batch_size: 8
+shuffle: 
+  train: True
+  test: False
+train_ratio: 0.8
+test_ratio: 0.2
+weight_decay: 0.0005
+momentum: 0.9
+mean:
+  R: 25.34 
+  G: 25.34 
+  B: 25.34 
+std:
+  R: 51.11
+  G: 51.11
+  B: 51.11
+size: 512
+lr: 0.005
+lr_schedure: 0.5
+lr_step: 1
+max_epoch: 10
