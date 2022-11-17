@@ -1,4 +1,4 @@
-{    
+{
     // 防止import出现问题
     "python.analysis.extraPaths": [
         "/share/users_root/masters/wt/MyTemplate",

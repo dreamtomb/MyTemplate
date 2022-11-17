@@ -17,7 +17,6 @@ def collect_pics(patients):
 
 # 数据集类
 class DataSet(Dataset):
-
     def __init__(self, cfg, mode):
         # 类变量定义
         self.cfg = cfg
@@ -40,8 +39,8 @@ class DataSet(Dataset):
             name = self.train_samples[idx]
         else:
             name = self.test_samples[idx]
-        image = cv2.imread(name.replace('tumor_mask',
-                                        'train_img'), 0).astype(np.float32)
+        image = cv2.imread(name.replace('tumor_mask', 'train_img'),
+                           0).astype(np.float32)
         mask = cv2.imread(name, 0).astype(np.float32)
         mask /= 255
         # resnet只能接受三通道输入
@@ -57,7 +56,7 @@ class DataSet(Dataset):
             return image, mask, name
 
     def collate(self, batch):
-        size = 512
+        size = self.cfg['size']
         image, mask, name = [list(item) for item in zip(*batch)]
         for i in range(len(batch)):
             image[i] = cv2.resize(image[i],

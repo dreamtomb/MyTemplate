@@ -4,7 +4,6 @@ import cv2
 
 
 class Augmentation(object):
-
     def __init__(self, cfg):
         self.mean = np.array(
             [[[cfg['mean']['R'], cfg['mean']['G'], cfg['mean']['B']]]])

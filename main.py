@@ -110,8 +110,8 @@ def main():
         # 训练
         logger.info(
             '#########################开始训练！###########################')
-        global_step=train(network, train_loader, optimizer, config, sw, logger,
-              global_step, step_per_epoch, epoch)
+        global_step = train(network, train_loader, optimizer, config, sw,
+                            logger, global_step, step_per_epoch, epoch)
         # 保存
         torch.save(
             network.state_dict(),
