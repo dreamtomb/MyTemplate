@@ -16,7 +16,7 @@ def train(network, train_loader, optimizer, config, sw, logger, global_step,
     optimizer.param_groups[1]['lr'] = config['lr']
     loss_per_ten_step = 0
     dice_per_ten_step = 0
-    show_step = 30
+    show_step = config['show_step']
     for step, (image, mask, name) in enumerate(train_loader):
         image, mask = image.cuda().float(), mask.cuda().float()
         pred_mask = network(image)  # shape使用默认的None，不上采样到512

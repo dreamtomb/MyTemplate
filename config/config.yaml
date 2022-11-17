@@ -33,3 +33,4 @@ lr_step: 3
 max_epoch: 30
 weight_decay: 0.0005
 momentum: 0.9
+show_step: 30
