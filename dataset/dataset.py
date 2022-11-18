@@ -50,7 +50,7 @@ class DataSet(Dataset):
 
         if self.mode == 'train':
             image, mask = self.aug.normalize(image, mask)
-            image, mask = self.aug.random_crop(image, mask)
+            # image, mask = self.aug.random_crop(image, mask)
             image, mask = self.aug.random_flip(image, mask)
             return image, mask, name
         else:
