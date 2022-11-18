@@ -51,8 +51,7 @@ def train(network, train_loader, optimizer, config, sw, logger, global_step,
                 leave_steps = step_per_epoch % show_step
                 loss_per_ten_step = loss_per_ten_step / leave_steps
                 dice_per_ten_step = dice_per_ten_step / leave_steps
-            sw.add_scalar('lr',
-                          optimizer.param_groups[1]['lr'],
+            sw.add_scalar('lr', {'lr': optimizer.param_groups[1]['lr']},
                           global_step=global_step)
             sw.add_scalars('loss', {'loss': loss_per_ten_step},
                            global_step=global_step)
