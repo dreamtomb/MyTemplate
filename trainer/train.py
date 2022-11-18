@@ -21,8 +21,16 @@ def train(network, train_loader, optimizer, config, sw, logger, global_step,
     show_step = config['show_step']
     for step, (image, mask, name) in enumerate(train_loader):
         image, mask = image.cuda().float(), mask.cuda().float()
-        pred_mask = network(image)  # shape使用默认的None，不上采样到512
-        loss = structure_loss(pred_mask, mask)
+        if config['model'] == 'PFSNet':
+            # NOTE: 以下为PFSnet+resnet50的代码
+            pred_mask = network(image)  # shape使用默认的None，不上采样到512
+            loss = structure_loss(pred_mask, mask)
+        else:
+            # NOTE: 以下为SINet-V2+res2net50的代码
+            preds1, preds2, preds3, pred_mask = network(image)
+            loss = structure_loss(preds1, mask) + structure_loss(
+                preds2, mask) + structure_loss(preds3, mask) + structure_loss(
+                    pred_mask, mask)
         optimizer.zero_grad()
         with amp.scale_loss(loss, optimizer) as scale_loss:
             scale_loss.backward()

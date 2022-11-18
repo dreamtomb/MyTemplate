@@ -14,6 +14,9 @@ from record.snapshot import snapshot
 from trainer.test import test
 from trainer.train import train
 from utils.utils import get_config, get_logger
+from model.SINet_V2 import Network
+
+os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 
 
 def main():
@@ -53,11 +56,21 @@ def main():
                              num_workers=config['num_workers'])
 
     # 定义网络
-    if config['load_model']:
-        model = './checkpoints/*.pth'
-        network = net(config, model)  # 使用训练好的模型继续训练
+    if config['model'] == 'PFSNet':
+        # NOTE: 以下为PFSnet+resnet50的代码
+        if config['load_model']:
+            model = './checkpoints/*.pth'
+            network = net(config, model)  # 使用训练好的模型继续训练
+        else:
+            network = net(config, model=None)  # 使用自定义初始化
     else:
-        network = net(config, model=None)  # 使用自定义初始化
+        # NOTE: 以下为SINet-V2+res2net50的代码
+        if config['load_model']:
+            model = './checkpoints/*.pth'
+            network = Network(config, channel=32)  # 使用训练好的模型继续训练
+            network.load_state_dict(torch.load(model))
+        else:
+            network = Network(config, channel=32)  # 使用自定义初始化
     network.cuda()
 
     # 参数

@@ -2,6 +2,7 @@ pretrain_model: './pretrain_model/resnet50.pth'
 load_model: False
 seed: 7
 cuda_device: 0
+model: 'PFSNet'
 
 data_path: '../new_data'
 config_path: './config/config.yaml'
