@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
 from model.res2net import res2net50_v1b_26w_4s
 
 
@@ -203,10 +204,12 @@ class ReverseStage(nn.Module):
 
 class Network(nn.Module):
     # res2net based encoder decoder
-    def __init__(self, channel=32, imagenet_pretrained=True):
+    def __init__(self, cfg, channel=32, imagenet_pretrained=True):
         super(Network, self).__init__()
-        # ---- ResNet Backbone ----
-        self.resnet = res2net50_v1b_26w_4s(pretrained=imagenet_pretrained)
+        self.cfg = cfg
+        # ---- Res2Net Backbone ----
+        self.bkbone = res2net50_v1b_26w_4s(self.cfg,
+                                           pretrained=imagenet_pretrained)
         # ---- Receptive Field Block like module ----
         self.rfb2_1 = RFB_modified(512, channel)
         self.rfb3_1 = RFB_modified(1024, channel)
@@ -221,14 +224,14 @@ class Network(nn.Module):
 
     def forward(self, x):
         # Feature Extraction
-        x = self.resnet.conv1(x)
-        x = self.resnet.bn1(x)
-        x = self.resnet.relu(x)
-        x = self.resnet.maxpool(x)  # bs, 64, 128, 128
-        x1 = self.resnet.layer1(x)  # bs, 256, 128, 128
-        x2 = self.resnet.layer2(x1)  # bs, 512, 64, 64
-        x3 = self.resnet.layer3(x2)  # bs, 1024, 32, 32
-        x4 = self.resnet.layer4(x3)  # bs, 2048, 16, 16
+        x = self.bkbone.conv1(x)
+        x = self.bkbone.bn1(x)
+        x = self.bkbone.relu(x)
+        x = self.bkbone.maxpool(x)  # bs, 64, 128, 128
+        x1 = self.bkbone.layer1(x)  # bs, 256, 128, 128
+        x2 = self.bkbone.layer2(x1)  # bs, 512, 64, 64
+        x3 = self.bkbone.layer3(x2)  # bs, 1024, 32, 32
+        x4 = self.bkbone.layer4(x3)  # bs, 2048, 16, 16
 
         # Receptive Field Block (enhanced)
         x2_rfb = self.rfb2_1(x2)  # channel -> 32
@@ -269,8 +272,9 @@ class Network(nn.Module):
 
 
 if __name__ == '__main__':
-    import numpy as np
     from time import time
+
+    import numpy as np
     torch.cuda.set_device(3)
     net = Network(imagenet_pretrained=True).cuda()
     net.eval()

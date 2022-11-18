@@ -1,13 +1,15 @@
-from datetime import datetime
-import torch
-import numpy as np
 import random
-from utils.utils import get_config
-from dataset.dataset import DataSet
+from datetime import datetime
+
+import numpy as np
+import torch
 from torch.utils.data import DataLoader
-from trainer.train import train
-from trainer.test import test
+
+from dataset.dataset import DataSet
 from record.snapshot import snapshot
+from trainer.test import test
+from trainer.train import train
+from utils.utils import get_config
 
 
 def main():

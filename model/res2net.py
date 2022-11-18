@@ -1,7 +1,8 @@
-import torch.nn as nn
 import math
-import torch.utils.model_zoo as model_zoo
+
 import torch
+import torch.nn as nn
+import torch.utils.model_zoo as model_zoo
 
 __all__ = [
     'Res2Net', 'res2net50_v1b', 'res2net101_v1b', 'res2net50_v1b_26w_4s'
@@ -225,7 +226,7 @@ def res2net101_v1b(pretrained=False, **kwargs):
     return model
 
 
-def res2net50_v1b_26w_4s(pretrained=False, **kwargs):
+def res2net50_v1b_26w_4s(cfg, pretrained=False, **kwargs):
     """Constructs a Res2Net-50_v1b_26w_4s lib.
     Args:
         pretrained (bool): If True, returns a lib pre-trained on ImageNet
@@ -233,11 +234,16 @@ def res2net50_v1b_26w_4s(pretrained=False, **kwargs):
     model = Res2Net(Bottle2neck, [3, 4, 6, 3], baseWidth=26, scale=4, **kwargs)
     if pretrained:
         # NOTE: pth是用显卡0训练的模型，因此加载的时候需要map_location，否则out of memory.
-        model_state = torch.load(
-            './pretrain_model/res2net50_v1b_26w_4s-3cf99910.pth',
-            map_location={'cuda:0': 'cuda:3'})
-        model.load_state_dict(model_state)
-        # lib.load_state_dict(model_zoo.load_url(model_urls['res2net50_v1b_26w_4s']))
+        if cfg['cuda_device'] == 0:
+            model_state = torch.load(
+                './pretrain_model/res2net50_v1b_26w_4s-3cf99910.pth')
+            model.load_state_dict(model_state)
+        else:
+            model_state = torch.load(
+                './pretrain_model/res2net50_v1b_26w_4s-3cf99910.pth',
+                map_location={'cuda:0': 'cuda:{}'.format(cfg['cuda_device'])})
+            model.load_state_dict(model_state)
+            # lib.load_state_dict(model_zoo.load_url(model_urls['res2net50_v1b_26w_4s']))
     return model
 
 

@@ -1,9 +1,11 @@
-import torch
 import datetime
+
+import torch
 from apex import amp
-from utils.utils import binarize
-from utils.metrics import calculate_batch_dice
+
 from solver.loss import structure_loss
+from utils.metrics import calculate_batch_dice
+from utils.utils import binarize
 
 
 def train(network, train_loader, optimizer, config, sw, logger, global_step,

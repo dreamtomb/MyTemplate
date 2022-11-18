@@ -1,8 +1,8 @@
 import torch
+
 from model.net import net
-from utils.utils import show_batch_image
-from utils.utils import binarize
 from utils.metrics import calculate_batch_dice
+from utils.utils import binarize, show_batch_image
 
 
 def test(loader, config, model=None, show_flag=False):

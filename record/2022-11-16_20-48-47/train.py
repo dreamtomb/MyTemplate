@@ -1,14 +1,15 @@
-import torch
-import os
 import datetime
-from tensorboardX import SummaryWriter
+import os
+
+import torch
 from apex import amp
-from utils.utils import get_logger
-from utils.utils import binarize
-from utils.metrics import calculate_batch_dice
+from tensorboardX import SummaryWriter
+
 from model.net import net
 from solver.loss import structure_loss
 from trainer.test import test
+from utils.metrics import calculate_batch_dice
+from utils.utils import binarize, get_logger
 
 
 def train(train_loader, test_loader, config):

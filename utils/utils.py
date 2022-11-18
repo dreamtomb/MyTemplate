@@ -1,10 +1,12 @@
-import torch
 import glob
-from tqdm import tqdm
-import numpy as np
-import yaml
 import logging
+
 import cv2
+import numpy as np
+import torch
+import yaml
+from tqdm import tqdm
+
 from augmentation.augmentation import Augmentation
 
 
@@ -104,7 +106,7 @@ def show_image(train_img, pred, mask, cfg, name):
     gt_mask = mask * 255
     Aug = Augmentation(cfg)
     train_img, gt_mask = Aug.anti_normalize(train_img, gt_mask)
-    train_mask = np.dstack((pred_mask, np.zeros([512, 512],
+    train_mask = np.dstack((pred_mask, np.zeros([cfg['size'], cfg['size']],
                                                 dtype=np.uint8), gt_mask))
     gt_res = cv2.addWeighted(train_img,
                              0.6,

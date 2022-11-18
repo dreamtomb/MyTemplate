@@ -1,10 +1,12 @@
-import torch
-import random
-import numpy as np
-import cv2
 import glob
-from augmentation.augmentation import Augmentation
+import random
+
+import cv2
+import numpy as np
+import torch
 from torch.utils.data import Dataset
+
+from augmentation.augmentation import Augmentation
 
 
 def collect_pics(patients):

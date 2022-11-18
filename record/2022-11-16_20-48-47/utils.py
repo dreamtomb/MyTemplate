@@ -1,10 +1,12 @@
-import torch
 import glob
-from tqdm import tqdm
-import numpy as np
-import yaml
 import logging
+
 import cv2
+import numpy as np
+import torch
+import yaml
+from tqdm import tqdm
+
 from augmentation.augmentation import Augmentation
 
 

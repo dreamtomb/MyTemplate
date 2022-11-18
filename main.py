@@ -1,38 +1,40 @@
-from datetime import datetime
 import os
-import torch
-import numpy as np
 import random
-from utils.utils import get_config
-from dataset.dataset import DataSet
-from torch.utils.data import DataLoader
-from trainer.train import train
-from trainer.test import test
-from record.snapshot import snapshot
-from tensorboardX import SummaryWriter
-from utils.utils import get_logger
-from model.net import net
+from datetime import datetime
+
+import numpy as np
+import torch
 from apex import amp
+from tensorboardX import SummaryWriter
+from torch.utils.data import DataLoader
+
+from dataset.dataset import DataSet
+from model.net import net
+from record.snapshot import snapshot
+from trainer.test import test
+from trainer.train import train
+from utils.utils import get_config, get_logger
 
 
 def main():
-    # 设置随机种子并指定训练显卡
-    seed = 7
-    torch.backends.cudnn.benchmark = False
-    torch.backends.cudnn.deterministic = True
-    torch.manual_seed(seed)
-    if torch.cuda.is_available():
-        torch.cuda.set_device(3)
-        torch.cuda.manual_seed(seed)
-        torch.cuda.manual_seed_all(seed)
-    np.random.seed(seed)
-    random.seed(seed)
-
     # 获取所有设置
     config_path = './config/config.yaml'
     config = get_config(config_path)
     now = '{:%Y-%m-%d_%H-%M-%S}'.format(datetime.now())
     config['now'] = now
+
+    # 设置随机种子并指定训练显卡
+    seed = config['seed']
+    device = config['cuda_device']
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.set_device(device)
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+    np.random.seed(seed)
+    random.seed(seed)
 
     # 设置数据集
     train_set = DataSet(config, 'train')
