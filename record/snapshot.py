@@ -49,9 +49,12 @@ def snapshot(config, mean_dice):
     summary_data = pd.read_excel(summary_path)
     new_data = {
         summary_data.columns[0]: [config['now']],
-        summary_data.columns[1]: [' '],
+        summary_data.columns[1]: ['归一化\r随机翻转'],
         summary_data.columns[2]: [' '],
-        summary_data.columns[3]: [' '],
+        summary_data.columns[3]: [
+            '{}'.format(config).replace('\'', '').replace('{', '').replace(
+                '}', '').replace(',', '\r')
+        ],
         summary_data.columns[4]: ['{}'.format(mean_dice)],
         summary_data.columns[5]:
         ['{}/{}'.format(config['checkpoints_path'], config['now'])],

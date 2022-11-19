@@ -59,7 +59,7 @@ def train(network, train_loader, optimizer, config, sw, logger, global_step,
                            global_step=global_step)
             logger.info(
                 '{:%Y-%m-%d_%H:%M:%S} || step:{:.0f}/{:.0f} || epoch:{:.0f}/{:.0f} || lr={:.6f} || loss={:.6f} || dice={:.6f}'
-                .format(datetime.datetime.now(), step, step_per_epoch,
+                .format(datetime.datetime.now(), step + 1, step_per_epoch,
                         epoch + 1, config['max_epoch'],
                         optimizer.param_groups[1]['lr'], loss_per_ten_step,
                         dice_per_ten_step))
