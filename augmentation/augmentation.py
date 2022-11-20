@@ -5,12 +5,10 @@ import torch
 
 class Augmentation(object):
     def __init__(self, cfg):
-        self.mean = np.array(
-            [[[cfg['mean']['R'], cfg['mean']['G'], cfg['mean']['B']]]])
-        self.std = np.array(
-            [[[cfg['std']['R'], cfg['std']['G'], cfg['std']['B']]]])
-        self.H = cfg['size']
-        self.W = cfg['size']
+        self.mean = np.array([[[cfg["mean"]["R"], cfg["mean"]["G"], cfg["mean"]["B"]]]])
+        self.std = np.array([[[cfg["std"]["R"], cfg["std"]["G"], cfg["std"]["B"]]]])
+        self.H = cfg["size"]
+        self.W = cfg["size"]
 
     def normalize(self, image, mask):
         """
@@ -94,12 +92,10 @@ class Augmentation(object):
             image (numpy.ndarray): 归一化之后的图像
             mask (numpy.ndarray): 不作处理的mask
         """
-        image = cv2.resize(image,
-                           dsize=(self.W, self.H),
-                           interpolation=cv2.INTER_LINEAR)
-        mask = cv2.resize(mask,
-                          dsize=(self.W, self.H),
-                          interpolation=cv2.INTER_LINEAR)
+        image = cv2.resize(
+            image, dsize=(self.W, self.H), interpolation=cv2.INTER_LINEAR
+        )
+        mask = cv2.resize(mask, dsize=(self.W, self.H), interpolation=cv2.INTER_LINEAR)
         return image, mask
 
     def to_tensor(self, image, mask):

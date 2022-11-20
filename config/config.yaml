@@ -14,22 +14,23 @@ checkpoints_path: './checkpoints'
 
 num_workers: 8
 batch_size: 16
-shuffle: 
+shuffle:
   train: True
   test: False
 train_ratio: 0.8
 test_ratio: 0.2
 
 mean:
-  R: 25.34 
-  G: 25.34 
-  B: 25.34 
+  R: 25.34
+  G: 25.34
+  B: 25.34
 std:
   R: 51.11
   G: 51.11
   B: 51.11
 
 size: 512
+optimizer: 'SGD'
 lr: 0.005
 lr_schedure: 0.5
 lr_step: 3

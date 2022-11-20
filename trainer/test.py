@@ -18,15 +18,12 @@ def test(network, loader, config, model=None, show_flag=False):
         test_num = 0
         step_per_epoch = len(loader)
         for step, (image, mask, name) in enumerate(loader):
-            print('step: {}/{}'.format(step + 1, step_per_epoch))
+            print("step: {}/{}".format(step + 1, step_per_epoch))
             image = image.cuda().float()
             mask = mask.cuda().float()
-            if config['model'] == 'PFSNet':
+            if config["model"] == "PFSNet":
                 # NOTE: 以下为PFSnet+resnet50的代码
-                shape = [
-                    torch.tensor(config['size']),
-                    torch.tensor(config['size'])
-                ]
+                shape = [torch.tensor(config["size"]), torch.tensor(config["size"])]
                 test_num += image.shape[0]
                 pred_mask = network(image, shape=shape)  # 输出上采样到512
             else:

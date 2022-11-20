@@ -10,11 +10,9 @@ def weight_init(module):
     初始化net中的参数
     """
     for n, m in module.named_children():
-        print('initialize: ' + n)
+        print("initialize: " + n)
         if isinstance(m, nn.Conv2d):
-            nn.init.kaiming_normal_(m.weight,
-                                    mode='fan_in',
-                                    nonlinearity='relu')
+            nn.init.kaiming_normal_(m.weight, mode="fan_in", nonlinearity="relu")
             if m.bias is not None:
                 nn.init.zeros_(m.bias)
         elif isinstance(m, (nn.BatchNorm2d, nn.InstanceNorm2d)):
@@ -22,15 +20,12 @@ def weight_init(module):
             if m.bias is not None:
                 nn.init.zeros_(m.bias)
         elif isinstance(m, nn.Linear):
-            nn.init.kaiming_normal_(m.weight,
-                                    mode='fan_in',
-                                    nonlinearity='relu')
+            nn.init.kaiming_normal_(m.weight, mode="fan_in", nonlinearity="relu")
             if m.bias is not None:
                 nn.init.zeros_(m.bias)
         elif isinstance(m, nn.Sequential):
             weight_init(m)
-        elif isinstance(
-                m, (nn.ReLU, nn.AdaptiveAvgPool2d, nn.Softmax, nn.Dropout2d)):
+        elif isinstance(m, (nn.ReLU, nn.AdaptiveAvgPool2d, nn.Softmax, nn.Dropout2d)):
             pass
         else:
             m.initialize()
@@ -40,15 +35,17 @@ class Rblock(nn.Module):
     def __init__(self, inplanes, outplanes):
         super(Rblock, self).__init__()
         self.squeeze1 = nn.Sequential(
-            nn.Conv2d(inplanes,
-                      outplanes,
-                      kernel_size=3,
-                      stride=1,
-                      dilation=2,
-                      padding=2), nn.BatchNorm2d(64), nn.ReLU(inplace=True))
+            nn.Conv2d(
+                inplanes, outplanes, kernel_size=3, stride=1, dilation=2, padding=2
+            ),
+            nn.BatchNorm2d(64),
+            nn.ReLU(inplace=True),
+        )
         self.squeeze2 = nn.Sequential(
             nn.Conv2d(inplanes, outplanes, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(64), nn.ReLU(inplace=True))
+            nn.BatchNorm2d(64),
+            nn.ReLU(inplace=True),
+        )
         self.gap = nn.AdaptiveAvgPool2d((1, 1))
         self.convg = nn.Conv2d(128, 128, 1)
         self.sftmax = nn.Softmax(dim=1)
@@ -89,10 +86,7 @@ class Yblock(nn.Module):
 
     def forward(self, x, y):
         if x.size()[2:] != y.size()[2:]:
-            y = F.interpolate(y,
-                              size=x.size()[2:],
-                              mode='bilinear',
-                              align_corners=True)
+            y = F.interpolate(y, size=x.size()[2:], mode="bilinear", align_corners=True)
         fuze = torch.mul(x, y)
         y = F.relu(self.bnB1(self.convB1(fuze + y)), inplace=True)
         x = F.relu(self.bnA1(self.convA1(fuze + x)), inplace=True)
@@ -155,28 +149,16 @@ class net(nn.Module):
         s1, s2, s3, s4, s5 = self.bkbone(x)
 
         s5, z = self.squeeze5(s5, None)
-        z = F.interpolate(z,
-                          size=s4.size()[2:],
-                          mode='bilinear',
-                          align_corners=True)
+        z = F.interpolate(z, size=s4.size()[2:], mode="bilinear", align_corners=True)
         z = F.relu(self.bn1(self.conv1(z)))
         s4, z = self.squeeze4(s4, z)
-        z = F.interpolate(z,
-                          size=s3.size()[2:],
-                          mode='bilinear',
-                          align_corners=True)
+        z = F.interpolate(z, size=s3.size()[2:], mode="bilinear", align_corners=True)
         z = F.relu(self.bn2(self.conv2(z)))
         s3, z = self.squeeze3(s3, z)
-        z = F.interpolate(z,
-                          size=s2.size()[2:],
-                          mode='bilinear',
-                          align_corners=True)
+        z = F.interpolate(z, size=s2.size()[2:], mode="bilinear", align_corners=True)
         z = F.relu(self.bn3(self.conv3(z)))
         s2, z = self.squeeze2(s2, z)
-        z = F.interpolate(z,
-                          size=s1.size()[2:],
-                          mode='bilinear',
-                          align_corners=True)
+        z = F.interpolate(z, size=s1.size()[2:], mode="bilinear", align_corners=True)
         z = F.relu(self.bn4(self.conv4(z)))
         s1, z = self.squeeze1(s1, z)
 
@@ -195,10 +177,9 @@ class net(nn.Module):
         s3 = self.Y41(s3, s4)
 
         shape = x.size()[2:] if shape is None else shape
-        p1 = F.interpolate(self.linearp1(s3),
-                           size=shape,
-                           mode='bilinear',
-                           align_corners=True)
+        p1 = F.interpolate(
+            self.linearp1(s3), size=shape, mode="bilinear", align_corners=True
+        )
         del s1, s2, s3, s4, s5, z
         torch.cuda.empty_cache()
         return p1

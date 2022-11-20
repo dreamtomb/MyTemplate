@@ -33,7 +33,7 @@ def dice_loss(pred, mask):
     # 计算DICE系数
     inter = (pred * mask).sum(axis=(2, 3))
     union = (pred + mask).sum(axis=(2, 3))
-    dice = (2. * inter + smooth) / (union + smooth)
+    dice = (2.0 * inter + smooth) / (union + smooth)
     return dice.mean()
 
 

@@ -7,22 +7,20 @@ class Bottleneck(nn.Module):
     """
     搭建renset需要的bottleneck类
     """
-    def __init__(self,
-                 inplanes,
-                 planes,
-                 stride=1,
-                 downsample=None,
-                 dilation=1):
+
+    def __init__(self, inplanes, planes, stride=1, downsample=None, dilation=1):
         super(Bottleneck, self).__init__()
         self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
-        self.conv2 = nn.Conv2d(planes,
-                               planes,
-                               kernel_size=3,
-                               stride=stride,
-                               padding=(3 * dilation - 1) // 2,
-                               bias=False,
-                               dilation=dilation)
+        self.conv2 = nn.Conv2d(
+            planes,
+            planes,
+            kernel_size=3,
+            stride=stride,
+            padding=(3 * dilation - 1) // 2,
+            bias=False,
+            dilation=dilation,
+        )
         self.bn2 = nn.BatchNorm2d(planes)
         self.conv3 = nn.Conv2d(planes, planes * 4, kernel_size=1, bias=False)
         self.bn3 = nn.BatchNorm2d(planes * 4)
@@ -41,16 +39,12 @@ class ResNet(nn.Module):
     """
     Resnet类,定义的时候需要config信息
     """
+
     def __init__(self, cfg):
         super(ResNet, self).__init__()
         self.cfg = cfg
         self.inplanes = 64
-        self.conv1 = nn.Conv2d(3,
-                               64,
-                               kernel_size=7,
-                               stride=2,
-                               padding=3,
-                               bias=False)
+        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
         self.bn1 = nn.BatchNorm2d(64)
         self.layer1 = self.make_layer(64, 3, stride=1, dilation=1)
         self.layer2 = self.make_layer(128, 4, stride=2, dilation=1)
@@ -59,17 +53,13 @@ class ResNet(nn.Module):
 
     def make_layer(self, planes, blocks, stride, dilation):
         downsample = nn.Sequential(
-            nn.Conv2d(self.inplanes,
-                      planes * 4,
-                      kernel_size=1,
-                      stride=stride,
-                      bias=False), nn.BatchNorm2d(planes * 4))
+            nn.Conv2d(
+                self.inplanes, planes * 4, kernel_size=1, stride=stride, bias=False
+            ),
+            nn.BatchNorm2d(planes * 4),
+        )
         layers = [
-            Bottleneck(self.inplanes,
-                       planes,
-                       stride,
-                       downsample,
-                       dilation=dilation)
+            Bottleneck(self.inplanes, planes, stride, downsample, dilation=dilation)
         ]
         self.inplanes = planes * 4
         for _ in range(1, blocks):
@@ -89,5 +79,5 @@ class ResNet(nn.Module):
         """
         使用预训练模型初始化resnet作为backbone
         """
-        resnet50_path = self.cfg['pretrain_model']
+        resnet50_path = self.cfg["pretrain_model"]
         self.load_state_dict(torch.load(resnet50_path), strict=False)

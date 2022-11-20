@@ -13,6 +13,6 @@ def calculate_batch_dice(pred_mask, gt_mask):
     # 计算DICE系数
     intersection = (pred_mask * gt_mask).sum(axis=(2, 3))
     union = (pred_mask + gt_mask).sum(axis=(2, 3))
-    dice = (2. * intersection + smooth) / (union + smooth)
+    dice = (2.0 * intersection + smooth) / (union + smooth)
     dice_mean = dice.mean()
     return dice_mean

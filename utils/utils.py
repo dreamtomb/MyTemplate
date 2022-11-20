@@ -5,12 +5,13 @@ import cv2
 import numpy as np
 import torch
 import yaml
+from thop import clever_format, profile
 from tqdm import tqdm
 
 from augmentation.augmentation import Augmentation
 
 
-def get_config(config_file_path='./config/config.yaml'):
+def get_config(config_file_path="./config/config.yaml"):
     """
     该函数实现了从配置文件中读取配置参数的操作
 
@@ -20,14 +21,14 @@ def get_config(config_file_path='./config/config.yaml'):
     Returns:
         config (dict): 配置信息,调用方式为:config['lr']
     """
-    file = open(config_file_path, 'r', encoding="utf-8")
+    file = open(config_file_path, "r", encoding="utf-8")
     file_data = file.read()
     file.close()
     config = yaml.load(file_data, Loader=yaml.FullLoader)
     return config
 
 
-def statistic_mean_std(data_path='../tumor_seg/train_img/*.png'):
+def statistic_mean_std(data_path="../tumor_seg/train_img/*.png"):
     """
     该函数用于统计数据集中所有训练图像(单通道)的均值和方差，用于进行图像预处理中的归一化
 
@@ -49,9 +50,9 @@ def statistic_mean_std(data_path='../tumor_seg/train_img/*.png'):
         pic_sum += torch.mean(pic, dim=[0, 1])
         pic_sqrd_sum += torch.mean(pic**2, dim=[0, 1])
         pic_num += 1
-        print('{0}/{1}'.format(pic_num, len(pic_list)))
+        print("{0}/{1}".format(pic_num, len(pic_list)))
     mean = pic_sum / pic_num
-    std = (pic_sqrd_sum / pic_num - mean**2)**0.5
+    std = (pic_sqrd_sum / pic_num - mean**2) ** 0.5
     return mean, std
 
 
@@ -73,7 +74,7 @@ def get_logger(filename, verbosity=1, name=None):
         1: logging.INFO,
         2: logging.WARNING,
         3: logging.ERROR,
-        4: logging.CRITICAL
+        4: logging.CRITICAL,
     }
     formatter = logging.Formatter(
         "[%(asctime)s][%(filename)s][line:%(lineno)d][%(levelname)s] %(message)s"
@@ -106,17 +107,14 @@ def show_image(train_img, pred, mask, cfg, name):
     gt_mask = mask * 255
     Aug = Augmentation(cfg)
     train_img, gt_mask = Aug.anti_normalize(train_img, gt_mask)
-    train_mask = np.dstack((pred_mask, np.zeros([cfg['size'], cfg['size']],
-                                                dtype=np.uint8), gt_mask))
-    gt_res = cv2.addWeighted(train_img,
-                             0.6,
-                             train_mask,
-                             0.4,
-                             0.9,
-                             dtype=cv2.CV_32FC3)
+    train_mask = np.dstack(
+        (pred_mask, np.zeros([cfg["size"], cfg["size"]], dtype=np.uint8), gt_mask)
+    )
+    gt_res = cv2.addWeighted(train_img, 0.6, train_mask, 0.4, 0.9, dtype=cv2.CV_32FC3)
     cv2.imwrite(
-        '{}/{}/{}'.format(cfg['image_res_path'], cfg['now'],
-                          name.split("/")[-1]), gt_res)
+        "{}/{}/{}".format(cfg["image_res_path"], cfg["now"], name.split("/")[-1]),
+        gt_res,
+    )
 
 
 def show_batch_image(train_img, pred, mask, cfg, name):
@@ -149,3 +147,19 @@ def binarize(pred_mask, threshold=0.5):
     """
     pred_mask = (pred_mask >= threshold) + 0
     return pred_mask
+
+
+def CalParams(model, input_tensor):
+    """
+    Usage:
+        Calculate Params and FLOPs via [THOP](https://github.com/Lyken17/pytorch-OpCounter)
+    Necessarity:
+        from thop import profile
+        from thop import clever_format
+    :param model:
+    :param input_tensor:
+    :return:
+    """
+    flops, params = profile(model, inputs=(input_tensor,))
+    flops, params = clever_format([flops, params], "%.3f")
+    print("[Statistics Information]\nFLOPs: {}\nParams: {}".format(flops, params))
