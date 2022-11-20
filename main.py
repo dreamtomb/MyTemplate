@@ -10,11 +10,11 @@ from torch.utils.data import DataLoader
 
 from dataset.dataset import DataSet
 from model.net import net
+from model.SINet_V2 import Network
 from record.snapshot import snapshot
 from trainer.test import test
 from trainer.train import train
 from utils.utils import get_config, get_logger
-from model.SINet_V2 import Network
 
 os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
 
@@ -44,9 +44,9 @@ def main():
     train_loader = DataLoader(
         train_set,
         collate_fn=train_set.collate,
-        batch_size=config["batch_size"],
+        batch_size=config["batch_size"]["train"],
         shuffle=config["shuffle"]["train"],
-        num_workers=config["num_workers"],
+        num_workers=config["num_workers"]["train"],
     )
     test_set = DataSet(config, "test")
     test_set.train_samples = train_set.train_samples
@@ -54,9 +54,9 @@ def main():
     test_loader = DataLoader(
         test_set,
         collate_fn=test_set.collate,
-        batch_size=config["batch_size"],
+        batch_size=config["batch_size"]["test"],
         shuffle=config["shuffle"]["test"],
-        num_workers=config["num_workers"],
+        num_workers=config["num_workers"]["test"],
     )
 
     # 定义网络
@@ -152,9 +152,17 @@ def main():
 
         # 验证
         logger.info("#########################开始验证！###########################")
-        mean_dice = test(network, test_loader, config, None, False)
+        mean_dice, mean_dice_per_case = test(network, test_loader, config, None, False)
         sw.add_scalars("val_dice", {"val_dice": mean_dice}, global_step=global_step)
-        logger.info("validation mean dice is {:.2f}".format(mean_dice))
+        sw.add_scalars(
+            "val_dice_per_case",
+            {"val_dice_per_case": mean_dice_per_case},
+            global_step=global_step,
+        )
+        logger.info("validation mean dice is {:.4f}".format(mean_dice))
+        logger.info(
+            "validation mean dice_per_case is {:.4f}".format(mean_dice_per_case)
+        )
         logger.info("#########################验证完成！###########################")
         if (epoch + 1) % config["lr_step"] == 0:
             config["lr"] *= config["lr_schedure"]
@@ -163,11 +171,14 @@ def main():
     model_path = "{}/{}/model-{}.pth".format(
         config["checkpoints_path"], config["now"], config["max_epoch"]
     )
-    mean_dice = test(network, test_loader, config, model_path, show_flag=True)
-    logger.info("test mean dice is {:.2f}".format(mean_dice))
+    mean_dice, mean_dice_per_case = test(
+        network, test_loader, config, model_path, show_flag=True
+    )
+    logger.info("test mean dice is {:.4f}".format(mean_dice))
+    logger.info("test mean dice_per_case is {:.4f}".format(mean_dice_per_case))
     logger.info("#########################测试完成！###########################")
     # 保存此次实验的全部代码，并在summary中添加一行实验记录
-    snapshot(config, mean_dice)
+    snapshot(config, mean_dice, mean_dice_per_case)
 
 
 if __name__ == "__main__":

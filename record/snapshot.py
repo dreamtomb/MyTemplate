@@ -29,7 +29,7 @@ def find_all_files_with_specified_suffix(
     return find_res
 
 
-def snapshot(config, mean_dice):
+def snapshot(config, mean_dice, mean_dice_per_case):
     """
     保存此次实验的全部代码，并在summary中添加一行实验记录
 
@@ -56,7 +56,15 @@ def snapshot(config, mean_dice):
             .replace("}", "")
             .replace(",", "\r")
         ],
-        summary_data.columns[4]: ["{}".format(mean_dice)],
+        summary_data.columns[4]: [
+            "{}".format(
+                {"mean_dice": mean_dice, "mean_dice_per_case": mean_dice_per_case}
+            )
+            .replace("'", "")
+            .replace("{", "")
+            .replace("}", "")
+            .replace(",", "\r")
+        ],
         summary_data.columns[5]: [
             "{}/{}".format(config["checkpoints_path"], config["now"])
         ],

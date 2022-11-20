@@ -14,7 +14,7 @@ def collect_pics(patients):
     for patient in patients:
         pics = glob.glob(patient + "/*.png")
         patients_pics += pics
-    return patients_pics
+    return sorted(patients_pics)
 
 
 # 数据集类
