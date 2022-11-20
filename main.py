@@ -25,6 +25,7 @@ def main():
     config = get_config(config_path)
     now = "{:%Y-%m-%d_%H-%M-%S}".format(datetime.now())
     config["now"] = now
+    config["lr_start"] = config["lr"]
 
     # 设置随机种子并指定训练显卡
     seed = config["seed"]
@@ -178,7 +179,7 @@ def main():
     logger.info("test mean dice_per_case is {:.4f}".format(mean_dice_per_case))
     logger.info("#########################测试完成！###########################")
     # 保存此次实验的全部代码，并在summary中添加一行实验记录
-    snapshot(config, mean_dice, mean_dice_per_case)
+    snapshot(config, mean_dice.item(), mean_dice_per_case.item())
 
 
 if __name__ == "__main__":
