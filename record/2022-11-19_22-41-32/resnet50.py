@@ -7,7 +7,6 @@ class Bottleneck(nn.Module):
     """
     搭建renset需要的bottleneck类
     """
-
     def __init__(self,
                  inplanes,
                  planes,
@@ -42,7 +41,6 @@ class ResNet(nn.Module):
     """
     Resnet类,定义的时候需要config信息
     """
-
     def __init__(self, cfg):
         super(ResNet, self).__init__()
         self.cfg = cfg

@@ -1,8 +1,8 @@
 pretrain_model: './pretrain_model/resnet50.pth'
 load_model: False
 seed: 7
-cuda_device: 0
-model: 'PFSNet'
+cuda_device: 3
+model: 'SINet-V2'
 
 data_path: '../new_data'
 config_path: './config/config.yaml'
@@ -37,8 +37,8 @@ size: 512
 optimizer: 'SGD'
 lr: 0.005
 lr_schedure: 0.5
-lr_step: 3
-max_epoch: 30
+lr_step: 10
+max_epoch: 85
 weight_decay: 0.0005
 momentum: 0.9
-show_step: 30
+show_step: 20

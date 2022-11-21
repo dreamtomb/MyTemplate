@@ -100,7 +100,7 @@ def main():
     )
 
     # 使用apex进行混合精读计算
-    network, optimizer = amp.initialize(network, optimizer, opt_level="O2")
+    network, optimizer = amp.initialize(network, optimizer, opt_level="O0")
 
     # 创建本次实验的log、checkpoint、image_res文件夹
     log_path = "{}/{}".format(config["log_path"], config["now"])

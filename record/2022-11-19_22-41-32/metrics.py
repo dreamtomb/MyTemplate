@@ -16,3 +16,8 @@ def calculate_batch_dice(pred_mask, gt_mask):
     dice = (2. * intersection + smooth) / (union + smooth)
     dice_mean = dice.mean()
     return dice_mean
+
+
+# TODO:计算三维DICE
+def calculate_batch_3d_dice(pred_mask, gt_mask):
+    pass

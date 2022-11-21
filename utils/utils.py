@@ -3,6 +3,7 @@ import logging
 
 import cv2
 import numpy as np
+import signatory
 import torch
 import yaml
 from thop import clever_format, profile
@@ -149,7 +150,7 @@ def binarize(pred_mask, threshold=0.5):
     return pred_mask
 
 
-def CalParams(model, input_tensor):
+def calculate_params(model, input_tensor):
     """
     Usage:
         Calculate Params and FLOPs via [THOP](https://github.com/Lyken17/pytorch-OpCounter)
@@ -163,3 +164,22 @@ def CalParams(model, input_tensor):
     flops, params = profile(model, inputs=(input_tensor,))
     flops, params = clever_format([flops, params], "%.3f")
     print("[Statistics Information]\nFLOPs: {}\nParams: {}".format(flops, params))
+
+
+def path_signature(binary_mask, depth):
+    """
+    计算某个二值图（预测二值图或者gt二值图）的边界的path signature。
+
+    Args:
+        binary_mask ( torch.Tensor[bs, 1, H, W] ): 二值化的预测图或gt图。
+        depth ( int ): path signature的截断阶数。
+
+    Returns:
+        ps ( torch.Tensor[bs, 1, H, W] ): 输入二值图的path signature。
+    """
+    for i in range(binary_mask.shape[0]):
+    return ps
+
+
+def cosine_similarity():
+    pass

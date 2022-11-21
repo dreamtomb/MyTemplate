@@ -51,7 +51,7 @@ class DataSet(Dataset):
 
         if self.mode == 'train':
             image, mask = self.aug.normalize(image, mask)
-            image, mask = self.aug.random_crop(image, mask)
+            # image, mask = self.aug.random_crop(image, mask)
             image, mask = self.aug.random_flip(image, mask)
             return image, mask, name
         else:
@@ -59,7 +59,7 @@ class DataSet(Dataset):
             return image, mask, name
 
     def collate(self, batch):
-        size = 512
+        size = self.cfg['size']
         image, mask, name = [list(item) for item in zip(*batch)]
         for i in range(len(batch)):
             image[i] = cv2.resize(image[i],

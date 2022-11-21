@@ -37,7 +37,6 @@ def weight_init(module):
 
 
 class Rblock(nn.Module):
-
     def __init__(self, inplanes, outplanes):
         super(Rblock, self).__init__()
         self.squeeze1 = nn.Sequential(
@@ -71,7 +70,6 @@ class Rblock(nn.Module):
 
 
 class Yblock(nn.Module):
-
     def __init__(self):
         super(Yblock, self).__init__()
 
@@ -111,7 +109,6 @@ class Yblock(nn.Module):
 
 
 class net(nn.Module):
-
     def __init__(self, cfg, model=None):
         super(net, self).__init__()
         self.cfg = cfg

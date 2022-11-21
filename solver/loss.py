@@ -68,3 +68,19 @@ def BCE_loss(pred, mask):
     """
     wbce = F.binary_cross_entropy_with_logits(pred, mask)
     return wbce.mean()
+
+
+def PS_loss(pred, mask):
+    """
+    计算两个边界的path signature的余弦相似度
+
+    Args:
+        pred (_type_): _description_
+        mask (_type_): _description_
+
+    Returns:
+        ps_loss: _description_
+    """
+    ps_loss = pred
+    ps_loss = mask
+    return ps_loss
