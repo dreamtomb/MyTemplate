@@ -4,7 +4,7 @@ from datetime import datetime
 
 import numpy as np
 import torch
-from apex import amp
+# from apex import amp
 from tensorboardX import SummaryWriter
 from torch.utils.data import DataLoader
 
@@ -121,8 +121,8 @@ def main():
         min_lr=1e-7,
     )
 
-    # 使用apex进行混合精读计算
-    network, optimizer = amp.initialize(network, optimizer, opt_level="O0")
+    # 使用apex进行混合精读计算,BUG: 使用amp无法使用自带的lr_schedule
+    # network, optimizer = amp.initialize(network, optimizer, opt_level="O0")
 
     # 创建本次实验的log、checkpoint、image_res文件夹
     log_path = "{}/{}".format(config["log_path"], config["now"])
