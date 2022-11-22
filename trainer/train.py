@@ -23,8 +23,6 @@ def train(
     该函数直接被main函数调用，是训练函数
     """
     network.train()
-    optimizer.param_groups[0]["lr"] = config["lr"] * 0.1
-    optimizer.param_groups[1]["lr"] = config["lr"]
     loss_per_ten_step = 0
     dice_per_ten_step = 0
     show_step = config["show_step"]
@@ -64,17 +62,23 @@ def train(
                 loss_per_ten_step = loss_per_ten_step / leave_steps
                 dice_per_ten_step = dice_per_ten_step / leave_steps
             sw.add_scalars(
-                "lr", {"lr": optimizer.param_groups[1]["lr"]}, global_step=global_step
+                "lr",
+                {
+                    "backbone_lr": optimizer.param_groups[0]["lr"],
+                    "head_lr": optimizer.param_groups[1]["lr"],
+                },
+                global_step=global_step,
             )
             sw.add_scalars("loss", {"loss": loss_per_ten_step}, global_step=global_step)
             sw.add_scalars("dice", {"dice": dice_per_ten_step}, global_step=global_step)
             logger.info(
-                "{:%Y-%m-%d_%H:%M:%S} || step:{:.0f}/{:.0f} || epoch:{:.0f}/{:.0f} || lr={:.6f} || loss={:.6f} || dice={:.6f}".format(
+                "{:%Y-%m-%d_%H:%M:%S} || step:{:.0f}/{:.0f} || epoch:{:.0f}/{:.0f} || backbone_lr={:.6f} || head_lr={:.6f} || loss={:.6f} || dice={:.6f}".format(
                     datetime.datetime.now(),
                     step + 1,
                     step_per_epoch,
                     epoch + 1,
                     config["max_epoch"],
+                    optimizer.param_groups[0]["lr"],
                     optimizer.param_groups[1]["lr"],
                     loss_per_ten_step,
                     dice_per_ten_step,

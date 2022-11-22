@@ -12,6 +12,7 @@ from dataset.dataset import DataSet
 from model.net import net
 from model.SINet_V2 import Network
 from record.snapshot import snapshot
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 from trainer.test import test
 from trainer.train import train
 from utils.utils import get_config, get_logger
@@ -25,7 +26,6 @@ def main():
     config = get_config(config_path)
     now = "{:%Y-%m-%d_%H-%M-%S}".format(datetime.now())
     config["now"] = now
-    config["lr_start"] = config["lr"]
 
     # 设置随机种子并指定训练显卡
     seed = config["seed"]
@@ -91,12 +91,34 @@ def main():
             head.append(param)
 
     # 优化器
-    optimizer = torch.optim.SGD(
-        [{"params": base}, {"params": head}],
-        lr=config["lr"],
-        momentum=config["momentum"],
-        weight_decay=config["weight_decay"],
-        nesterov=True,
+    if config["optimizer"] == "SGD":
+        optimizer = torch.optim.SGD(
+            [
+                {"params": base, "lr": 0.1 * config["lr"]},
+                {"params": head, "lr": config["lr"]},
+            ],
+            lr=config["lr"],
+            momentum=config["momentum"],
+            weight_decay=config["weight_decay"],
+            nesterov=True,
+        )
+    else:
+        optimizer = torch.optim.Adam(
+            [
+                {"params": base, "lr": 0.1 * config["lr"]},
+                {"params": head, "lr": config["lr"]},
+            ],
+            lr=config["lr"],
+            weight_decay=config["weight_decay"],
+        )
+
+    # 学习率衰减器
+    scheduler = ReduceLROnPlateau(
+        optimizer=optimizer,
+        mode="max",
+        factor=config["lr_schedure"],
+        patience=config["lr_step"],
+        min_lr=1e-7,
     )
 
     # 使用apex进行混合精读计算
@@ -165,8 +187,7 @@ def main():
             "validation mean dice_per_case is {:.4f}".format(mean_dice_per_case)
         )
         logger.info("#########################验证完成！###########################")
-        if (epoch + 1) % config["lr_step"] == 0:
-            config["lr"] *= config["lr_schedure"]
+        scheduler.step(mean_dice)
     # 测试
     logger.info("#########################开始测试！###########################")
     model_path = "{}/{}/model-{}.pth".format(
