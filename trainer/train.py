@@ -1,7 +1,7 @@
 import datetime
 
 import torch
-# from apex import amp
+from apex import amp
 
 from solver.loss import structure_loss
 from utils.metrics import calculate_batch_dice
@@ -42,9 +42,8 @@ def train(
                 + structure_loss(pred_mask, mask)
             )
         optimizer.zero_grad()
-        # with amp.scale_loss(loss, optimizer) as scale_loss:
-        #     scale_loss.backward()
-        loss.backward()
+        with amp.scale_loss(loss, optimizer) as scale_loss:
+            scale_loss.backward()
         optimizer.step()
         pred_mask = torch.sigmoid(pred_mask).detach()
         mask = mask.detach()

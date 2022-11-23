@@ -4,7 +4,7 @@ from datetime import datetime
 
 import numpy as np
 import torch
-# from apex import amp
+from apex import amp
 from tensorboardX import SummaryWriter
 from torch.utils.data import DataLoader
 
@@ -94,7 +94,7 @@ def main():
     if config["optimizer"] == "SGD":
         optimizer = torch.optim.SGD(
             [
-                {"params": base, "lr": 0.1 * config["lr"]},
+                {"params": base, "lr": config["base_head_ratio"] * config["lr"]},
                 {"params": head, "lr": config["lr"]},
             ],
             lr=config["lr"],
@@ -105,7 +105,7 @@ def main():
     else:
         optimizer = torch.optim.Adam(
             [
-                {"params": base, "lr": 0.1 * config["lr"]},
+                {"params": base, "lr": config["base_head_ratio"] * config["lr"]},
                 {"params": head, "lr": config["lr"]},
             ],
             lr=config["lr"],
@@ -118,11 +118,11 @@ def main():
         mode="max",
         factor=config["lr_schedure"],
         patience=config["lr_step"],
-        min_lr=1e-7,
+        min_lr=config["lr_min"],
     )
 
     # 使用apex进行混合精读计算
-    # network, optimizer = amp.initialize(network, optimizer, opt_level="O0")
+    network, optimizer = amp.initialize(network, optimizer, opt_level="O0")
 
     # 创建本次实验的log、checkpoint、image_res文件夹
     log_path = "{}/{}".format(config["log_path"], config["now"])
