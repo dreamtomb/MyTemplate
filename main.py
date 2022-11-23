@@ -121,7 +121,7 @@ def main():
         min_lr=1e-7,
     )
 
-    # 使用apex进行混合精读计算,BUG: 使用amp无法使用自带的lr_schedule
+    # 使用apex进行混合精读计算
     # network, optimizer = amp.initialize(network, optimizer, opt_level="O0")
 
     # 创建本次实验的log、checkpoint、image_res文件夹
@@ -182,9 +182,9 @@ def main():
             {"val_dice_per_case": mean_dice_per_case},
             global_step=global_step,
         )
-        logger.info("validation mean dice is {:.4f}".format(mean_dice))
+        logger.info("validation mean dice is {:.6f}".format(mean_dice))
         logger.info(
-            "validation mean dice_per_case is {:.4f}".format(mean_dice_per_case)
+            "validation mean dice_per_case is {:.6f}".format(mean_dice_per_case)
         )
         logger.info("#########################验证完成！###########################")
         scheduler.step(mean_dice)
@@ -196,8 +196,8 @@ def main():
     mean_dice, mean_dice_per_case = test(
         network, test_loader, config, model_path, show_flag=True
     )
-    logger.info("test mean dice is {:.4f}".format(mean_dice))
-    logger.info("test mean dice_per_case is {:.4f}".format(mean_dice_per_case))
+    logger.info("test mean dice is {:.6f}".format(mean_dice))
+    logger.info("test mean dice_per_case is {:.6f}".format(mean_dice_per_case))
     logger.info("#########################测试完成！###########################")
     # 保存此次实验的全部代码，并在summary中添加一行实验记录
     snapshot(config, mean_dice.item(), mean_dice_per_case.item())

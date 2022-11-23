@@ -73,7 +73,7 @@ def train(
             sw.add_scalars("loss", {"loss": loss_per_ten_step}, global_step=global_step)
             sw.add_scalars("dice", {"dice": dice_per_ten_step}, global_step=global_step)
             logger.info(
-                "{:%Y-%m-%d_%H:%M:%S} || step:{:.0f}/{:.0f} || epoch:{:.0f}/{:.0f} || backbone_lr={:.6f} || head_lr={:.6f} || loss={:.6f} || dice={:.6f}".format(
+                "{:%Y-%m-%d_%H:%M:%S} || step:{:.0f}/{:.0f} || epoch:{:.0f}/{:.0f} || backbone_lr={:.7f} || head_lr={:.7f} || loss={:.6f} || dice={:.6f}".format(
                     datetime.datetime.now(),
                     step + 1,
                     step_per_epoch,
