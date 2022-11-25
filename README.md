@@ -1,8 +1,8 @@
 # MyTemplate项目说明
-## 一、项目目的
-本项目是自用的深度学习框架模板，用于快速编写程序进行实验。
-本项目使用black+flake8+isort进行代码格式化。
-本项目使用autodocstring+googledoc格式进行函数注释。
+## 一、项目说明
+- 本项目是自用的深度学习框架模板，用于快速编写程序进行实验。
+- 本项目使用black+flake8+isort进行代码格式化。
+- 本项目使用autodocstring+googledoc格式进行函数注释。
 ## 二、项目结构
 ```
 +---.vscode
