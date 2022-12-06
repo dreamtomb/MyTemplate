@@ -20,7 +20,9 @@ def test(network, loader, config, model=None, show_flag=False):
         step_per_epoch = len(loader)
         case = ""
         for step, (image, mask, name) in enumerate(loader):
-            print("step: {}/{}".format(step + 1, step_per_epoch))
+            print(
+                "\r", "step: {}/{}".format(step + 1, step_per_epoch), end="", flush=True
+            )
             image = image.cuda().float()
             mask = mask.cuda().float()
             if config["model"] == "PFSNet":
@@ -55,4 +57,5 @@ def test(network, loader, config, model=None, show_flag=False):
             dice.append(temp)
         mean_dice = torch.tensor(dice).mean()
         mean_dice_per_case = torch.tensor(dice_per_case).mean()
+        print('\r')
         return mean_dice, mean_dice_per_case
