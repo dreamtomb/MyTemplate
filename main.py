@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader
 from dataset.dataset import DataSet
 from model.net import net
 from model.SINet_V2 import Network
-from record.snapshot import snapshot
+from record.snapshot import snapshot, add_result
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from trainer.test import test
 from trainer.train import train
@@ -134,6 +134,9 @@ def main():
     os.mkdir(checkpoints_path)
     os.mkdir(record_path)
 
+    # 保存此次实验的全部代码，并在summary中添加一行实验记录,实验结果先置零
+    snapshot(config, 0, 0)
+
     # 使用tensorboard
     sw = SummaryWriter(log_path)
 
@@ -199,8 +202,8 @@ def main():
     logger.info("test mean dice is {:.6f}".format(mean_dice))
     logger.info("test mean dice_per_case is {:.6f}".format(mean_dice_per_case))
     logger.info("#########################测试完成！###########################")
-    # 保存此次实验的全部代码，并在summary中添加一行实验记录
-    snapshot(config, mean_dice.item(), mean_dice_per_case.item())
+
+    add_result(config, mean_dice.item(), mean_dice_per_case.item())
 
 
 if __name__ == "__main__":

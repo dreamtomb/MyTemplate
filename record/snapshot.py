@@ -25,11 +25,15 @@ def find_all_files_with_specified_suffix(
         for file in files:
             file_name, suffix_name = os.path.splitext(file)
             if suffix_name in target_suffix:
-                find_res.append(os.path.join(root_path, file))
+                full_path = os.path.join(root_path, file)
+                if "record/2" in full_path:
+                    pass
+                else:
+                    find_res.append(full_path)
     return find_res
 
 
-def snapshot(config, mean_dice, mean_dice_per_case):
+def snapshot(config, mean_dice=0, mean_dice_per_case=0):
     """
     保存此次实验的全部代码，并在summary中添加一行实验记录
 
@@ -78,3 +82,15 @@ def snapshot(config, mean_dice, mean_dice_per_case):
     summary_data = pd.concat([summary_data, new_data], axis=0)
     summary_data.to_excel(summary_path, index=False)
     print("snapshot successful!")
+
+
+def add_result(config, mean_dice, mean_dice_per_case):
+    # 定义路径
+    summary_path = config["summary_path"]
+    # 添加实验记录
+    summary_data = pd.read_excel(summary_path)
+    summary_data.iloc[-1, 4] = "mean_dice: {},\rmean_dice_per_case: {}".format(
+        mean_dice, mean_dice_per_case
+    )
+    summary_data.to_excel(summary_path, index=False)
+    print("add result successful!")
